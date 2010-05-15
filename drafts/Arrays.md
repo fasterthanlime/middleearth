@@ -18,7 +18,7 @@ Arrays
 Raw arrays and Pointers
 -----------------------
 
-The C language, on which the main ooc implementation is largely based, offers some level of array support. Little distinction is being made between pointers and C arrays.
+The C language, on which the main ooc implementation is largely based, offers some level of array support. [Little distinction][1] is being made between pointers and C arrays.
 
 However, functionality in this area is weak.
 
@@ -34,7 +34,7 @@ C arrays aren't bound-checked, resulting in segmentation faults in case of out-o
     array[11] = -1;
     // kaboom! victim is now -1 if array and victim were contiguous in memory
 
-Pointers may overlap, preventing some optimization (hence the distinction between memmov and memcpy, for example). See [the Wikipedia page on Aliasing][1] for more details.
+Pointers may overlap, preventing some optimization (hence the distinction between memmov and memcpy, for example). See [the Wikipedia page on Aliasing][2] for more details.
 
 Also, C arrays aren't multi-dimensional. Although you can declare things like
 
@@ -126,7 +126,32 @@ Easy to interface with C
 Multi-dimensional
 ~~~~~~~~~~~~~~~~~
 
+Multi-dimensional ooc arrays are arrays of arrays.
+
+    identity := Float[3][3] new()
     
+is equivalent to:
+
+    identity := Array[3] new()
+    for(i in 0..3) {
+        identity[i] = Float[3] new()
+    }
+    
+Arrays can be n-dimensional, with any n >= 1, nesting
+the initialization as seen above.
+    
+Easy to store and pass around
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    printMatrix: func (m: Float[][]) {
+        for(row in 0..m length) {
+            "(" print()
+            for(col in 0..m[row] length) {
+                "%3.3f " format(m[row][col]) println()
+            }
+            ")" println()
+        }
+    }
 
 Faster than ArrayList, and respect strict aliasing rules
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -138,18 +163,25 @@ Under the hood, ooc arrays are C structs declared like:
         void* restrict data;
     } _lang_array__Array;
 
-The [C99 restrict keyword][2] allows to announce our intention to never allow aliasing of ooc arrays.
+The [C99 restrict keyword][3] allows to announce our intention to never allow aliasing of ooc arrays.
 
 This should make ooc arrays faster than naively-declared C arrays, as long as there is support for restrict and related optimizations in the C compiler used.
+
+Array is a cover type declared in lang/types that allow the access to 'data' (the raw pointer containing the array's data), and 'length' (the array's number of elements)
 
 Issues
 ------
 
-When creating bindings for a C library
+Casting from a raw array to an ooc array requires to specify the size, for example:
 
+    cArray := someCall()
+    oocArray := cArray as Char[256]
+    
+To allow further bound-checking. It's a little additionnal burden on the bindings writers, if they want to make them friendly to use from ooc code.
 
 References and Footnotes
 ------------------------
 
-[1]: http://en.wikipedia.org/wiki/Aliasing_(computing) "Wikipedia article on Aliasing"
-[2]: http://en.wikipedia.org/wiki/Restrict "C99 Restrict keyword"
+[1]: http://en.wikipedia.org/wiki/C_(programming_language)#Array-pointer_interchangeability "Array-pointer interchangeability"
+[2]: http://en.wikipedia.org/wiki/Aliasing_(computing) "Wikipedia article on Aliasing"
+[3]: http://en.wikipedia.org/wiki/Restrict "C99 Restrict keyword"

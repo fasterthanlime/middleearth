@@ -23,14 +23,15 @@ The C language, on which the main ooc implementation is largely based, offers so
 
 Also, C arrays, besides being not bound-checked and with a weird declaration syntax, aren't multi-dimensional. Although you can declare things like
 
-..
+``
 int matrix[3][3];
+``
 
 You can't use that notation in function arguments definition
 
-..
+``
 void printMatrix(int[][] matrix); // error
-
+``
 
 ooc has always supported raw arrays and pointers with a C-like syntax, again, making little distinction between them.
 

@@ -63,6 +63,7 @@ ooc provides a higher-level way to store an ordered list of elements: structs/Ar
 
 The main difference between an array and an ArrayList is that ArrayList make a distinction between size and capacity.
 
+    ::ooc
     list := ArrayList<Int> new(10) // size = 0, capacity = 10
     list add(1)                    // size = 1, capacity = 10
     list[8] // error! can't access the 9th element, 9 >= 1

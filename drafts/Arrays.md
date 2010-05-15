@@ -19,9 +19,28 @@ Arrays
 Raw arrays and Pointers
 -----------------------
 
-The C language, on which the main ooc implementation is largely based, offers some level of array support. Little distinction is being made between pointers and C arrays. However, functionality in this area is weak. Arrays aren't bound-checked, resulting in segmentation faults in case of out-of-bounds read/write. Pointers may overlap, preventing some optimization (hence the distinction between memmov and memcpy, for example). See [The Wikipedia page on Aliasing][1] for more details.
+The C language, on which the main ooc implementation is largely based, offers some level of array support. Little distinction is being made between pointers and C arrays.
 
-Also, C arrays, besides being not bound-checked and with a weird declaration syntax, aren't multi-dimensional. Although you can declare things like
+However, functionality in this area is weak.
+
+First, the order of declaration is quite strange:
+``
+int array[];
+int *array;
+``
+
+C arrays aren't bound-checked, resulting in segmentation faults in case of out-of-bounds read/write, or even worse - corruption of other sensible memory areas.
+
+``
+int array[10];
+int veryImportant = 42;
+array[11] = -1;
+// kaboom! veryImportant is now -1 if array and veryImportant were contiguous in memory
+``
+
+Pointers may overlap, preventing some optimization (hence the distinction between memmov and memcpy, for example). See [The Wikipedia page on Aliasing][1] for more details.
+
+Also, C arrays aren't multi-dimensional. Although you can declare things like
 
 ``
 int matrix[3][3];
@@ -33,7 +52,15 @@ You can't use that notation in function arguments definition
 void printMatrix(int[][] matrix); // error
 ``
 
-ooc has always supported raw arrays and pointers with a C-like syntax, again, making little distinction between them.
+ooc has always supported raw arrays and pointers with a C-like syntax with a few syntactic tweaks. In C:
+``
+// in C
+int *a, b, c;   // 'a' is a pointer to int, 'b' and 'c' are ints.
+int *a, *b, *c; // 'a', 'b', 'c', are pointers to int
+
+// in ooc
+a, b, c: Int* // 'a', 'b', 'c', are pointers to int
+``
 
 ArrayList
 ---------

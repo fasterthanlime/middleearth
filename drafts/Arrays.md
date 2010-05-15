@@ -24,48 +24,48 @@ The C language, on which the main ooc implementation is largely based, offers so
 However, functionality in this area is weak.
 
 First, the order of declaration is quite strange:
-``
-int array[];
-int *array;
-``
+
+    int array[];
+    int *array;
 
 C arrays aren't bound-checked, resulting in segmentation faults in case of out-of-bounds read/write, or even worse - corruption of other sensible memory areas.
 
-``
-int array[10];
-int veryImportant = 42;
-array[11] = -1;
-// kaboom! veryImportant is now -1 if array and veryImportant were contiguous in memory
-``
+    int array[10];
+    int victim = 42;
+    array[11] = -1;
+    // kaboom! victim is now -1 if array and victim were contiguous in memory
 
-Pointers may overlap, preventing some optimization (hence the distinction between memmov and memcpy, for example). See [The Wikipedia page on Aliasing][1] for more details.
+Pointers may overlap, preventing some optimization (hence the distinction between memmov and memcpy, for example). See [the Wikipedia page on Aliasing][1] for more details.
 
 Also, C arrays aren't multi-dimensional. Although you can declare things like
 
-``
-int matrix[3][3];
-``
+    int matrix[3][3];
 
 You can't use that notation in function arguments definition
 
-``
-void printMatrix(int[][] matrix); // error
-``
+    void printMatrix(int matrix[][]); // error
+    
+.. you have to use `int *matrix`
 
 ooc has always supported raw arrays and pointers with a C-like syntax with a few syntactic tweaks. In C:
-``
-// in C
-int *a, b, c;   // 'a' is a pointer to int, 'b' and 'c' are ints.
-int *a, *b, *c; // 'a', 'b', 'c', are pointers to int
 
-// in ooc
-a, b, c: Int* // 'a', 'b', 'c', are pointers to int
-``
+    // in C
+    int *a, b, c;   // 'a' is a pointer to int, 'b' and 'c' are ints.
+    int *a, *b, *c; // 'a', 'b', 'c', are pointers to int
+
+    // in ooc
+    a, b, c: Int* // 'a', 'b', 'c', are pointers to int
 
 ArrayList
 ---------
 
 ooc provides a higher-level way to store an ordered list of elements: structs/ArrayList. However, even with improvements to the generics code, it'll never be quite as fast as built-in arrays.
+
+The main difference between an array and an ArrayList is that ArrayList make a distinction between size and capacity.
+
+    list := ArrayList<Int> new(10) // size = 0, capacity = 10
+    list add(1)                    // size = 1, capacity = 10
+    list[8] // error! can't access the 9th element, 9 >= 1
 
 Introducing: ooc arrays
 -----------------------

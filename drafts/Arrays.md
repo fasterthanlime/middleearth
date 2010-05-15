@@ -82,8 +82,7 @@ Therefore, there was clearly a need for built-in arrays in ooc, meeting those de
   
 So here we go, issue by issue:
 
-Consistent syntax
-~~~~~~~~~~~~~~~~~
+### Consistent syntax
 
     // declare an array of int, unknown size, don't allocate it, don't initialize it
     a: Int[]
@@ -94,8 +93,7 @@ Consistent syntax
     // declare an array of 3 ints, allocate and initialize it
     c := [1, 2, 3]
     
-Bound-checked
-~~~~~~~~~~~~~
+### Bound-checked
 
     a := [1, 2, 3]
     
@@ -109,8 +107,7 @@ Bound-checked
         a[i] toString() println()
     }
     
-Easy to interface with C
-~~~~~~~~~~~~~~~~~~~~~~~~
+### Easy to interface with C
 
     // array literal detects its real type via the context. Here, it's Float*
     glVertex3fv([1.0, 1.0, 1.0])
@@ -123,8 +120,7 @@ Easy to interface with C
     a := [1.0, 0.0, 1.0] as Float*
     printArray(a as Float[3])
     
-Multi-dimensional
-~~~~~~~~~~~~~~~~~
+### Multi-dimensional
 
 Multi-dimensional ooc arrays are arrays of arrays.
 
@@ -140,8 +136,7 @@ is equivalent to:
 Arrays can be n-dimensional, with any n >= 1, nesting
 the initialization as seen above.
     
-Easy to store and pass around
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Easy to store and pass around
 
     printMatrix: func (m: Float[][]) {
         for(row in 0..m length) {
@@ -153,8 +148,7 @@ Easy to store and pass around
         }
     }
 
-Faster than ArrayList, and respect strict aliasing rules
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Faster than ArrayList, and respect strict aliasing rules
 
 Under the hood, ooc arrays are C structs declared like:
 

@@ -74,11 +74,73 @@ Introducing: ooc arrays
 Therefore, there was clearly a need for built-in arrays in ooc, meeting those demands:
 
   - Consistent syntax
-  - Strict aliasing rules - allow optimizations
   - Bound-checked
+  - Easy to interface with C
   - Multi-dimensional
   - Easy to store and pass around
-  - Faster than ArrayList
+  - Faster than ArrayList, and respect strict aliasing rules
+  
+So here we go, issue by issue:
+
+Consistent syntax
+~~~~~~~~~~~~~~~~~
+
+    // declare an array of int, unknown size, don't allocate it, don't initialize it
+    a: Int[]
+    
+    // declare an array of 3 ints and allocate it, but don't initialze it
+    b := Int[3] new()
+    
+    // declare an array of 3 ints, allocate and initialize it
+    c := [1, 2, 3]
+    
+Bound-checked
+~~~~~~~~~~~~~
+
+    a := [1, 2, 3]
+    
+    // out-of-bounds read = exception at runtime
+    a[5] toString() println()
+    
+    // out-of-bounds write = exception at runtime
+    a[18] = 8
+    
+    for(i in 0..a length) {
+        a[i] toString() println()
+    }
+    
+Easy to interface with C
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // array literal detects its real type via the context. Here, it's Float*
+    glVertex3fv([1.0, 1.0, 1.0])
+    
+    // casting from ooc array to raw array
+    a := [1.0, 0.0, 1.0]
+    glVertex3fv(a as Float*)
+    
+    // casting from raw array to ooc array (artificial example, btw)
+    a := [1.0, 0.0, 1.0] as Float*
+    printArray(a as Float[3])
+    
+Multi-dimensional
+~~~~~~~~~~~~~~~~~
+
+    
+
+Faster than ArrayList, and respect strict aliasing rules
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Under the hood, ooc arrays are C structs declared like:
+
+    typedef struct {
+        size_t length;
+        void* restrict data;
+    } _lang_array__Array;
+
+The [C99 restrict keyword][2] allows to announce our intention to never allow aliasing of ooc arrays.
+
+This should make ooc arrays faster than naively-declared C arrays, as long as there is support for restrict and related optimizations in the C compiler used.
 
 Issues
 ------
@@ -89,5 +151,5 @@ When creating bindings for a C library
 References and Footnotes
 ------------------------
 
-
 [1]: http://en.wikipedia.org/wiki/Aliasing_(computing) "Wikipedia article on Aliasing"
+[2]: http://en.wikipedia.org/wiki/Restrict "C99 Restrict keyword"

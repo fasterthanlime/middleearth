@@ -12,7 +12,6 @@ Arrays
    + Raw arrays and Pointers
    + ArrayList
    + Introducing: ooc arrays
-   + Rationale
    + Issues
    + References and Footnotes
 
@@ -62,21 +61,24 @@ ArrayList
 ooc provides a higher-level way to store an ordered list of elements: structs/ArrayList. However, even with improvements to the generics code, it'll never be quite as fast as built-in arrays.
 
 The main difference between an array and an ArrayList is that ArrayList make a distinction between size and capacity.
+`size` is the  number of elements in the list.
+`capacity` is the number of elements the list can store without having to resize itself.
 
-    ::ooc
     list := ArrayList<Int> new(10) // size = 0, capacity = 10
     list add(1)                    // size = 1, capacity = 10
-    list[8] // error! can't access the 9th element, 9 >= 1
+    list[8] // error! can't access the 9th element, 9 >= size
 
 Introducing: ooc arrays
 -----------------------
 
-Therefore, 
+Therefore, there was clearly a need for built-in arrays in ooc, meeting those demands:
 
-Rationale
----------
-
-
+  - Consistent syntax
+  - Strict aliasing rules - allow optimizations
+  - Bound-checked
+  - Multi-dimensional
+  - Easy to store and pass around
+  - Faster than ArrayList
 
 Issues
 ------
